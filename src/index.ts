@@ -9,6 +9,9 @@ runSchedule();
 app.get('/price', (req: Request, res: Response) => {
   getPrice().then(result => {
     console.log("Resulting price value:", result);
+  })
+  .catch((error) => {
+    console.log(error);
   });
   res.status(200).send(priceValue.toString());
 });
