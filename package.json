@@ -1,0 +1,24 @@
+{
+  "name": "crypto-gas-price",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "prestart": "npm run build",
+    "start": "env-cmd -f .env node .",
+    "start:dev": "env-cmd -f .env nodemon .",
+    "start:prod": "env-cmd -f .env node .",
+    "lint": "eslint 'src/**/*.{js,ts}'",
+    "lint:fix": "eslint 'src/**/*.{js,ts}' --fix"
+  },
+  "author": "Ernesto Messina",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^18.0.6",
+    "dotenv": "^16.0.1",
+    "env-cmd": "^10.1.0",
+    "request": "^2.88.2",
+    "node-cron": "^3.0.1"
+  }
+}
