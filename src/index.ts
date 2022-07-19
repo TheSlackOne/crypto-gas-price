@@ -1,19 +1,29 @@
 import express, { Express, Request, Response } from 'express';
-import { runSchedule, priceValue, getPrice } from '../routes/price/price';
+import rateLimit from 'express-rate-limit'
+import { runPriceUpdateSchedule, priceValue, getPrice } from '../routes/price/price';
 require("dotenv").config();
+
+const limiter = rateLimit({
+	windowMs: 1 * 1000,     // 1 request per second
+	max: 1,                 // Limit each IP to `max` requests per `window`
+	standardHeaders: true,  // Return rate limit info in the `RateLimit-*` headers
+	legacyHeaders: false,   // Disable the `X-RateLimit-*` headers
+})
 
 const app: Express = express();
 
-runSchedule();
+app.use(limiter)
+
+if (process.env.LAZY_MODE?.toLocaleLowerCase() === 'true') {
+  console.log('Running lazy mode.');
+} else {
+  runPriceUpdateSchedule();
+}
 
 app.get('/price', (req: Request, res: Response) => {
-  getPrice().then(result => {
-    console.log("Resulting price value:", result);
+  getPrice().then((result: any) => {
+    res.send(result.toString());
   })
-  .catch((error) => {
-    console.log(error);
-  });
-  res.status(200).send(priceValue.toString());
 });
 
 app.listen(process.env.PORT, () => {
