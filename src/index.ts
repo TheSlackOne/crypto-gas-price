@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import rateLimit from 'express-rate-limit'
-import { runPriceUpdateSchedule, priceValue, getPrice } from '../routes/price/price';
+import { runPriceUpdateSchedule, getPrice } from '../routes/price/price';
 require("dotenv").config();
 
 const limiter = rateLimit({
@@ -16,6 +16,7 @@ app.use(limiter)
 
 if (process.env.LAZY_MODE?.toLocaleLowerCase() === 'true') {
   console.log('Running lazy mode.');
+  getPrice().then();
 } else {
   runPriceUpdateSchedule();
 }
@@ -27,5 +28,5 @@ app.get('/price', (req: Request, res: Response) => {
 });
 
 app.listen(process.env.PORT, () => {
-  console.log(`Price value server running on port ${process.env.PORT}`)
+  console.log(`Price Value server running on port ${process.env.PORT}`)
 })
