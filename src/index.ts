@@ -14,17 +14,10 @@ const app: Express = express();
 
 app.use(limiter)
 
-if (process.env.LAZY_MODE?.toLocaleLowerCase() === 'true') {
-  console.log('Running lazy mode.');
-  getPrice().then();
-} else {
-  runPriceUpdateSchedule();
-}
+runPriceUpdateSchedule();
 
 app.get('/price', (req: Request, res: Response) => {
-  getPrice().then((result: any) => {
-    res.send(result.toString());
-  })
+  res.send(getPrice().toString());
 });
 
 app.listen(process.env.PORT, () => {
