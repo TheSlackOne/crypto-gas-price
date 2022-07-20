@@ -21,3 +21,13 @@ Response:
 ```
 16
 ```
+
+## Running on Docker
+Build
+```
+docker build -t crypto-gas-server .
+```
+Run
+```
+docker run -d -p8080:8080 crypto-gas-server
+```

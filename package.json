@@ -15,6 +15,7 @@
   "author": "Ernesto Messina",
   "license": "ISC",
   "dependencies": {
+    "typescript": "^4.7.4",
     "@types/express": "^4.17.13",
     "@types/node": "^18.0.6",
     "dotenv": "^16.0.1",
