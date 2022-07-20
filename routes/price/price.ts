@@ -14,7 +14,8 @@ const options = {
   headers: { 'Authorization': process.env.GAS_PRICE_PROVIDER_KEY }
 };  
 
-const getGasPrice = async () => {
+const getGasPrice = () => {
+  console.log("flag2");
   request(options, (error: any, response: any, body: any) => {
     if (!error && response.statusCode == 200) {
       JSON.parse(body).blockPrices.forEach((price: any) => {
@@ -29,9 +30,11 @@ const getGasPrice = async () => {
   });
 };
 
-export const runPriceUpdateSchedule = async () => {
-  cron.schedule(`*/${process.env.UPDATE_INTERVAL_SEC} * * * * *`, async () => {
-    await getGasPrice();
+export const runPriceUpdateSchedule = () => {
+  cron.schedule(`*/${process.env.UPDATE_INTERVAL_SEC} * * * * *`, () => {
+    console.log("flag1");
+    getGasPrice();
+    console.log("flag3");
   });
 };
 
@@ -39,7 +42,7 @@ export const getPrice = () => {
   return new Promise((resolve, reject) => {
     if (process.env.LAZY_MODE?.toLocaleLowerCase() === 'true') {
       if (!lastReqTimeMs || Date.now() - lastReqTimeMs > CACHE_DURATION) {
-        getGasPrice().then();
+        getGasPrice();
       }
     }
     resolve(priceValue);
