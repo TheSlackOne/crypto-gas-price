@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import rateLimit from 'express-rate-limit'
-import { runPriceUpdateSchedule, getPrice } from '../routes/price/price';
+import { GasPrice } from '../routes/price/price';
 require("dotenv").config();
 
 const limiter = rateLimit({
@@ -14,10 +14,10 @@ const app: Express = express();
 
 app.use(limiter)
 
-runPriceUpdateSchedule();
+const gasPrice = new GasPrice();
 
 app.get('/price', (req: Request, res: Response) => {
-  res.send(getPrice().toString());
+  res.send(gasPrice.getPrice().toString());
 });
 
 app.listen(process.env.PORT, () => {

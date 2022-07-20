@@ -2,36 +2,41 @@ const request = require('request');
 const cron = require('node-cron');
 require("dotenv").config();
 
-export let priceValue = 0;
+export class GasPrice {
+  price: number = 0;
+  options = {
+    url: process.env.GAS_PRICE_PROVIDER_HOST,
+    method: 'GET',
+    headers: { 'Authorization': process.env.GAS_PRICE_PROVIDER_KEY }
+  };  
 
-const options = {
-  url: process.env.GAS_PRICE_PROVIDER_HOST,
-  method: 'GET',
-  headers: { 'Authorization': process.env.GAS_PRICE_PROVIDER_KEY }
-};  
+  constructor() {
+    this.runPriceUpdateSchedule();
+  }
 
-const getGasPrice = () => {
-  request(options, (error: string, response: any, body: string) => {
-    if (!error && response.statusCode == 200) {
-      JSON.parse(body).blockPrices.forEach((price: any) => {
-        price.estimatedPrices.forEach((estimation: any) => {
-          if (estimation.confidence > 98) {
-            priceValue = estimation.price;
-          }
+  getGasPrice() {
+    request(this.options, (error: string, response: any, body: string) => {
+      if (!error && response.statusCode == 200) {
+        JSON.parse(body).blockPrices.forEach((price: any) => {
+          price.estimatedPrices.forEach((estimation: any) => {
+            if (estimation.confidence > 98) {
+              this.price = estimation.price;
+            }
+          });
         });
-      });
-    }
-  });
-};
+      }
+    });
+  }
 
-export const runPriceUpdateSchedule = () => {
-  cron.schedule(`*/${process.env.UPDATE_INTERVAL_SEC} * * * * *`, () => {
-    getGasPrice();
-  });
-};
+  runPriceUpdateSchedule = () => {
+    cron.schedule(`*/${process.env.UPDATE_INTERVAL_SEC} * * * * *`, () => {
+      this.getGasPrice();
+    });
+  }
 
-export const getPrice = (): number => {
-  return priceValue;
+  getPrice(): number {
+    return this.price;
+  }
 }
 
-module.exports = { runPriceUpdateSchedule, getPrice };
+module.exports = { GasPrice };
